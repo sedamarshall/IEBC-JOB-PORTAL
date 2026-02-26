@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Segoe UI", system-ui, sans-serif;
+  --color-primary: #9dd167;
+  --color-primary-dark: #8bc355;
+  --color-dark: #2f2f2f;
+  --color-bg-light: #f6f8f9;
+  --color-border-gray: #e6e6e6;
+  --color-success: #9dd167;
+  --color-warning: #f5c542;
+  --color-danger: #ff6b6b;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-light text-dark font-sans;
+  }
+}
+
+.glass-card {
+  @apply bg-white border border-border-gray rounded-lg shadow-sm;
+}
+
+.btn-primary {
+  @apply bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded transition-colors;
+}
+
+.btn-outline {
+  @apply border border-border-gray hover:bg-gray-50 text-dark font-semibold py-2 px-4 rounded transition-colors;
+}
+
+.badge-pending {
+  @apply bg-warning/20 text-warning px-2 py-1 rounded-full text-xs font-bold uppercase;
+}
+
+.badge-shortlisted {
+  @apply bg-success/20 text-success px-2 py-1 rounded-full text-xs font-bold uppercase;
+}
+
+.badge-rejected {
+  @apply bg-danger/20 text-danger px-2 py-1 rounded-full text-xs font-bold uppercase;
+}
