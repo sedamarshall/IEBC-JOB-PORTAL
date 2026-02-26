@@ -140,8 +140,13 @@ const Register: React.FC<RegisterProps> = ({ onToggle }) => {
     <div className="min-h-screen bg-bg-light py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full text-white font-bold text-3xl mb-4 shadow-lg">
-            IEBC
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full mb-4 shadow-lg p-2 border border-gray-100">
+            <img 
+              src="https://jobs.iebc.or.ke/logo.png" 
+              alt="IEBC Logo" 
+              className="w-full h-full object-contain"
+              referrerPolicy="no-referrer"
+            />
           </div>
           <h1 className="text-2xl font-bold text-dark">Create Your Account</h1>
           <p className="text-gray-500 mt-2">Join the national recruitment portal</p>

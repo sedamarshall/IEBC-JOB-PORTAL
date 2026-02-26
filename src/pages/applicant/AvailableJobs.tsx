@@ -242,21 +242,12 @@ const AvailableJobs: React.FC = () => {
               animate={{ scale: 1, opacity: 1 }}
               className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center"
             >
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl border-4 border-success/20">
+              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl border-4 border-success/20 p-2">
                 <img 
-                  src="/logo.png" 
+                  src="https://jobs.iebc.or.ke/logo.png" 
                   alt="IEBC Logo" 
-                  className="w-16 h-16 object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    const parent = e.currentTarget.parentElement;
-                    if (parent) {
-                      const icon = document.createElement('div');
-                      icon.className = 'text-success';
-                      icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
-                      parent.appendChild(icon);
-                    }
-                  }}
+                  className="w-full h-full object-contain"
+                  referrerPolicy="no-referrer"
                 />
               </div>
               <h2 className="text-2xl font-bold text-dark mb-2">Application Submitted!</h2>

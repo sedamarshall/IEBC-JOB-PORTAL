@@ -74,13 +74,13 @@ const AdminDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, i) => (
-          <div key={i} className="glass-card p-6 flex items-center gap-4">
-            <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center text-white shadow-sm`}>
+          <div key={i} className="p-6 flex items-center gap-4 rounded-lg shadow-sm border border-[#91c05d]" style={{ backgroundColor: '#a2d26a' }}>
+            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center text-white shadow-sm backdrop-blur-sm">
               <stat.icon size={24} />
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium">{stat.label}</p>
-              <p className="text-2xl font-bold text-dark">{stat.value}</p>
+              <p className="text-sm text-white/80 font-medium">{stat.label}</p>
+              <p className="text-2xl font-bold text-white">{stat.value}</p>
             </div>
           </div>
         ))}

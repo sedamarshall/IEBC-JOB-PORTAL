@@ -44,21 +44,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   return (
     <div className="w-64 bg-white border-r border-border-gray h-screen flex flex-col sticky top-0">
       <div className="p-6 border-b border-border-gray flex items-center gap-3">
-        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 overflow-hidden">
+        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 overflow-hidden p-1">
           <img 
-            src="/logo.png" 
+            src="https://jobs.iebc.or.ke/logo.png" 
             alt="IEBC Logo" 
             className="w-10 h-10 object-contain"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-              const parent = e.currentTarget.parentElement;
-              if (parent) {
-                const fallback = document.createElement('div');
-                fallback.className = 'w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl';
-                fallback.innerText = 'IEBC';
-                parent.appendChild(fallback);
-              }
-            }}
+            referrerPolicy="no-referrer"
           />
         </div>
         <div>

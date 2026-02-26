@@ -9,12 +9,10 @@ const Navbar: React.FC = () => {
     <header className="h-16 bg-white border-b border-border-gray flex items-center justify-between px-8 sticky top-0 z-10">
       <div className="flex items-center gap-4">
         <img 
-          src="/logo.png" 
+          src="https://jobs.iebc.or.ke/logo.png" 
           alt="IEBC Logo" 
           className="h-10 w-10 object-contain"
-          onError={(e) => {
-            e.currentTarget.style.display = 'none';
-          }}
+          referrerPolicy="no-referrer"
         />
         <h2 className="text-lg font-semibold text-dark">
           National Job Recruitment Portal
