@@ -114,11 +114,11 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
             initial={{ opacity: 0, y: 25, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="w-full max-w-[400px] relative z-20"
+            className="w-full max-w-[490px] relative z-20"
           >
             {/* The Floating Card with heavy, realistic shadow */}
             <div className="bg-white rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.35)] p-8 border border-white/20 backdrop-blur-sm">
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-start mb-6">
                 <img 
                   src="https://jobs.iebc.or.ke/logo.png" 
                   alt="Logo" 
@@ -127,7 +127,7 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
                 />
               </div>
 
-              <div className="text-center mb-7">
+              <div className="text-left mb-7">
                 <h2 className="text-xl font-bold text-primary">Login to Online Portal</h2>
                 <p className="text-gray-400 text-xs mt-1.5">Enter your credentials to access your account</p>
               </div>
@@ -196,7 +196,7 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-xl shadow-md shadow-primary/10 transition-all flex items-center justify-center gap-2 disabled:opacity-70 text-sm"
+                  className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-[30px] shadow-md shadow-primary/10 transition-all flex items-center justify-center gap-2 disabled:opacity-70 text-sm"
                 >
                   {isLoading ? <Loader2 size={18} className="animate-spin" /> : 'Login'}
                 </button>
