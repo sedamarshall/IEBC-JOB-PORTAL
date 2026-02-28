@@ -60,9 +60,9 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
       {/* Full-width Background Image Layer */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=90&w=1920" 
-          alt="Professional Environment" 
-          className="w-full h-full object-cover brightness-110 contrast-105"
+          src="https://digital.imbank.com/auth/resources/0mxiw/login/inm/img/bg-imgs/woman/woman-1200w.png" 
+          alt="Professional Background" 
+          className="w-full h-full object-cover object-center brightness-110 contrast-105"
         />
         
         {/* Global Overlays */}
