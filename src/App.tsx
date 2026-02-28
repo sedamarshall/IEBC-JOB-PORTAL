@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from './contexts/AuthContext';
+import { AuthProvider, AuthContext, useAuth } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
@@ -15,7 +16,6 @@ import ApplicationsManagement from './pages/admin/ApplicationsManagement';
 import ApplicantsManagement from './pages/admin/ApplicantsManagement';
 import AdminSettings from './pages/admin/Settings';
 import Reports from './pages/admin/Reports';
-import { AuthProvider } from './contexts/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
 
 const AppContent: React.FC = () => {
@@ -93,7 +93,13 @@ const AppContent: React.FC = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <AuthContext.Consumer>
+        {({ user }) => (
+          <NotificationProvider userId={user?.id}>
+            <AppContent />
+          </NotificationProvider>
+        )}
+      </AuthContext.Consumer>
     </AuthProvider>
   );
 }

@@ -104,10 +104,11 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS notifications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER, -- Nullable for admin/global notifications
     title TEXT NOT NULL,
     message TEXT NOT NULL,
     type TEXT DEFAULT 'info',
+    action_url TEXT,
     is_read INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -211,6 +212,23 @@ async function startServer() {
     const user = db.prepare("SELECT * FROM users WHERE email = ? AND password = ?").get(email, password) as any;
     if (user) {
       const { password: _, ...userWithoutPassword } = user;
+      
+      // Trigger Profile Incomplete Reminder for applicants
+      if (user.role === 'applicant') {
+        const profileFields = ['first_name', 'last_name', 'phone', 'county_id', 'constituency_id', 'ward_id'];
+        const filledFields = profileFields.filter(field => user[field]);
+        const completion = (filledFields.length / profileFields.length) * 100;
+        
+        if (completion < 100) {
+          // Check if a reminder was sent recently to avoid spamming
+          const lastReminder = db.prepare("SELECT id FROM notifications WHERE user_id = ? AND title = ? AND created_at > datetime('now', '-1 day')").get(user.id, "Profile Incomplete Reminder");
+          if (!lastReminder) {
+            db.prepare("INSERT INTO notifications (user_id, title, message, type, action_url) VALUES (?, ?, ?, ?, ?)")
+              .run(user.id, "Profile Incomplete Reminder", `Your profile is only ${Math.round(completion)}% complete. Please complete it to increase your chances of being shortlisted.`, "warning", "/profile");
+          }
+        }
+      }
+      
       res.json(userWithoutPassword);
     } else {
       res.status(401).json({ error: "Invalid credentials" });
@@ -284,6 +302,29 @@ async function startServer() {
     try {
       const result = db.prepare("INSERT INTO applications (user_id, job_id, ref_number) VALUES (?, ?, ?)")
         .run(user_id, job_id, ref_number);
+      
+      const job = db.prepare("SELECT title FROM jobs WHERE id = ?").get(job_id) as any;
+      
+      // Notify Applicant
+      db.prepare("INSERT INTO notifications (user_id, title, message, type, action_url) VALUES (?, ?, ?, ?, ?)")
+        .run(user_id, "Application Submitted", `Successfully applied for ${job?.title || 'Job'}. Reference: ${ref_number}`, "success", "/my-applications");
+      
+      // Notify Admins
+      const admins = db.prepare("SELECT id FROM users WHERE role = 'admin'").all() as any[];
+      admins.forEach(admin => {
+        db.prepare("INSERT INTO notifications (user_id, title, message, type, action_url) VALUES (?, ?, ?, ?, ?)")
+          .run(admin.id, "New Application Received", `New application for ${job?.title || 'Job'} from user ID ${user_id}`, "info", "/admin/applications");
+      });
+
+      // High Application Volume Alert (e.g., > 50 applications)
+      const appCount = db.prepare("SELECT COUNT(*) as count FROM applications WHERE job_id = ?").get(job_id) as any;
+      if (appCount.count >= 50 && appCount.count % 10 === 0) { // Alert at 50, 60, 70...
+        admins.forEach(admin => {
+          db.prepare("INSERT INTO notifications (user_id, title, message, type, action_url) VALUES (?, ?, ?, ?, ?)")
+            .run(admin.id, "High Application Volume Alert", `Job "${job?.title}" has received ${appCount.count} applications.`, "warning", "/admin/applications");
+        });
+      }
+
       res.json({ id: result.lastInsertRowid, ref_number });
     } catch (error: any) {
       res.status(400).json({ error: "You have already applied for this position." });
@@ -298,12 +339,13 @@ async function startServer() {
     // Create notification for the user
     const application = db.prepare("SELECT user_id, ref_number FROM applications WHERE id = ?").get(req.params.id) as any;
     if (application) {
-      db.prepare("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)")
+      db.prepare("INSERT INTO notifications (user_id, title, message, type, action_url) VALUES (?, ?, ?, ?, ?)")
         .run(
           application.user_id, 
           "Application Status Updated", 
           `Your application ${application.ref_number} has been updated to: ${status}.`,
-          status === 'Shortlisted' ? 'success' : (status === 'Rejected' ? 'error' : 'info')
+          status === 'Shortlisted' ? 'success' : (status === 'Rejected' ? 'danger' : 'info'),
+          "/my-applications"
         );
     }
     
@@ -470,10 +512,15 @@ async function startServer() {
     res.json({ success: true });
   });
 
+  app.put("/api/notifications/user/:user_id/read-all", (req, res) => {
+    db.prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?").run(req.params.user_id);
+    res.json({ success: true });
+  });
+
   app.post("/api/notifications", (req, res) => {
-    const { user_id, title, message, type } = req.body;
-    const result = db.prepare("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)")
-      .run(user_id, title, message, type || 'info');
+    const { user_id, title, message, type, action_url } = req.body;
+    const result = db.prepare("INSERT INTO notifications (user_id, title, message, type, action_url) VALUES (?, ?, ?, ?, ?)")
+      .run(user_id, title, message, type || 'info', action_url);
     res.json({ id: result.lastInsertRowid });
   });
 

@@ -104,3 +104,14 @@ export interface Ward {
   constituency_id: number;
   name: string;
 }
+
+export interface Notification {
+  id: number;
+  user_id: number | null;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'danger';
+  action_url?: string;
+  is_read: boolean;
+  created_at: string;
+}

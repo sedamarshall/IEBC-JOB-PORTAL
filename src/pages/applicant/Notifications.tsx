@@ -1,67 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { Bell, CheckCircle, AlertCircle, Info, Clock, Loader2, Check } from 'lucide-react';
+import React from 'react';
+import { useNotifications } from '../../contexts/NotificationContext';
+import { Bell, CheckCircle, AlertCircle, Info, Clock, Loader2, Check, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-interface Notification {
-  id: number;
-  title: string;
-  message: string;
-  type: string;
-  is_read: number;
-  created_at: string;
-}
-
 const Notifications: React.FC = () => {
-  const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchNotifications = async () => {
-    try {
-      const response = await fetch(`/api/notifications/${user?.id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setNotifications(data);
-      }
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user) fetchNotifications();
-  }, [user]);
-
-  const markAsRead = async (id: number) => {
-    try {
-      const response = await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
-      if (response.ok) {
-        setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: 1 } : n));
-      }
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  };
-
-  const markAllAsRead = async () => {
-    const unread = notifications.filter(n => !n.is_read);
-    for (const n of unread) {
-      await markAsRead(n.id);
-    }
-  };
+  const { notifications, unreadCount, markAsRead, markAllAsRead, loading } = useNotifications();
 
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'success': return <CheckCircle size={18} className="text-success" />;
+      case 'danger':
       case 'error': return <AlertCircle size={18} className="text-danger" />;
+      case 'warning': return <AlertCircle size={18} className="text-warning" />;
       default: return <Info size={18} className="text-primary" />;
     }
   };
 
-  if (isLoading) {
+  const handleNotificationClick = (notification: any) => {
+    markAsRead(notification.id);
+    if (notification.action_url) {
+      window.location.href = notification.action_url;
+    }
+  };
+
+  if (loading && notifications.length === 0) {
     return (
       <div className="flex justify-center py-12">
         <Loader2 size={32} className="animate-spin text-primary" />
@@ -76,7 +38,7 @@ const Notifications: React.FC = () => {
           <h1 className="text-2xl font-bold text-dark">Notifications</h1>
           <p className="text-gray-500 text-sm">Stay updated with your application status and portal alerts.</p>
         </div>
-        {notifications.some(n => !n.is_read) && (
+        {unreadCount > 0 && (
           <button 
             onClick={markAllAsRead}
             className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
@@ -91,43 +53,51 @@ const Notifications: React.FC = () => {
           {notifications.map((notification) => (
             <motion.div
               layout
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               key={notification.id}
-              className={`glass-card p-4 border-l-4 transition-all ${
-                notification.is_read ? 'border-gray-200 opacity-75' : 
+              onClick={() => handleNotificationClick(notification)}
+              className={`glass-card p-5 border-l-4 transition-all cursor-pointer hover:shadow-md ${
+                notification.is_read ? 'border-gray-200 opacity-80' : 
                 notification.type === 'success' ? 'border-success' :
-                notification.type === 'error' ? 'border-danger' : 'border-primary'
+                notification.type === 'danger' ? 'border-danger' :
+                notification.type === 'warning' ? 'border-warning' : 'border-primary'
               }`}
             >
               <div className="flex gap-4">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
                   notification.is_read ? 'bg-gray-100' : 
                   notification.type === 'success' ? 'bg-success/10' :
-                  notification.type === 'error' ? 'bg-danger/10' : 'bg-primary/10'
+                  notification.type === 'danger' ? 'bg-danger/10' :
+                  notification.type === 'warning' ? 'bg-warning/10' : 'bg-primary/10'
                 }`}>
                   {getTypeIcon(notification.type)}
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
-                    <h3 className={`font-bold text-sm ${notification.is_read ? 'text-gray-600' : 'text-dark'}`}>
+                    <h3 className={`font-bold text-base ${notification.is_read ? 'text-gray-600' : 'text-dark'}`}>
                       {notification.title}
                     </h3>
-                    <span className="text-[10px] text-gray-400 flex items-center gap-1">
-                      <Clock size={10} /> {new Date(notification.created_at).toLocaleDateString()}
+                    <span className="text-xs text-gray-400 flex items-center gap-1">
+                      <Clock size={12} /> {new Date(notification.created_at).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">
                     {notification.message}
                   </p>
-                  {!notification.is_read && (
-                    <button 
-                      onClick={() => markAsRead(notification.id)}
-                      className="mt-3 text-[10px] font-bold text-primary hover:underline"
-                    >
-                      Mark as read
-                    </button>
-                  )}
+                  
+                  <div className="mt-4 flex items-center justify-between">
+                    {notification.action_url && (
+                      <span className="text-xs font-bold text-primary flex items-center gap-1 uppercase tracking-wider">
+                        View Details <ExternalLink size={12} />
+                      </span>
+                    )}
+                    {!notification.is_read && (
+                      <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-bold uppercase">
+                        New
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
