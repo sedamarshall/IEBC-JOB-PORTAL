@@ -56,30 +56,30 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
   };
 
   return (
-    <div className="min-h-screen relative bg-white font-sans overflow-hidden">
-      {/* Full-width Background Image Layer */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="https://digital.imbank.com/auth/resources/0mxiw/login/inm/img/bg-imgs/woman/woman-1200w.png" 
-          alt="Professional Background" 
-          className="w-full h-full object-cover object-center brightness-110 contrast-105"
-        />
-        
-        {/* Global Overlays */}
-        <div className="absolute inset-0 bg-primary/20 backdrop-blur-[1px]"></div>
-        <div 
-          className="absolute inset-y-0 left-0 w-[60%] lg:w-[45%] bg-primary" 
-          style={{ 
-            clipPath: 'ellipse(65% 100% at 0% 50%)',
-            opacity: 0.85
-          }}
-        ></div>
-      </div>
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50 font-sans overflow-hidden relative">
+      {/* Left Section - Background & Branding */}
+      <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden rounded-r-[60px] shadow-2xl z-0">
+        {/* Background Image Layer */}
+        <div className="absolute inset-0">
+          <img 
+            src="https://digital.imbank.com/auth/resources/0mxiw/login/inm/img/bg-imgs/woman/woman-1200w.png" 
+            alt="Professional Background" 
+            className="w-full h-full object-cover object-center brightness-110 contrast-105"
+          />
+          
+          {/* Overlays */}
+          <div className="absolute inset-0 bg-primary/20 backdrop-blur-[1px]"></div>
+          <div 
+            className="absolute inset-y-0 left-0 w-[70%] bg-primary" 
+            style={{ 
+              clipPath: 'ellipse(65% 100% at 0% 50%)',
+              opacity: 0.85
+            }}
+          ></div>
+        </div>
 
-      {/* Content Layer */}
-      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row">
-        {/* Left Section - Branding Content */}
-        <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-16 text-white">
+        {/* Branding Content Container */}
+        <div className="relative z-10 flex flex-col justify-between p-16 text-white h-full w-full">
           <div className="flex gap-5">
             <a href="#" className="hover:text-white/70 transition-colors"><Facebook size={18} /></a>
             <a href="#" className="hover:text-white/70 transition-colors"><Instagram size={18} /></a>
@@ -107,17 +107,18 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
             <p>customercare@portal.go.ke | +254 20 322 1000</p>
           </div>
         </div>
+      </div>
 
-        {/* Right Section - Floating Login Card */}
-        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 25, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="w-full max-w-[490px] relative z-20"
-          >
-            {/* The Floating Card with heavy, realistic shadow */}
-            <div className="bg-white rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.35)] p-8 border border-white/20 backdrop-blur-sm">
+      {/* Right Section - Floating Login Card */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 25, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="w-full max-w-[490px]"
+        >
+          {/* The Floating Card with heavy, realistic shadow */}
+          <div className="bg-white rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.35)] p-8 border border-white/20 backdrop-blur-sm">
               <div className="flex justify-start mb-6">
                 <img 
                   src="https://jobs.iebc.or.ke/logo.png" 
@@ -235,7 +236,6 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
             </div>
           </motion.div>
         </div>
-      </div>
 
       {/* Forgot Password Modal */}
       <AnimatePresence>
