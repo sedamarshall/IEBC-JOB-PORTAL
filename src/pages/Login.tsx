@@ -58,7 +58,7 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50 font-sans overflow-hidden relative">
       {/* Left Section - Background & Branding */}
-      <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden rounded-r-[60px] shadow-2xl z-0">
+      <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
         {/* Background Image Layer */}
         <div className="absolute inset-0">
           <img 
@@ -79,7 +79,7 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
         </div>
 
         {/* Branding Content Container */}
-        <div className="relative z-10 flex flex-col justify-between p-16 text-white h-full w-full">
+        <div className="hidden lg:flex relative z-10 flex-col justify-between p-16 text-white h-full w-full lg:w-[60%]">
           <div className="flex gap-5">
             <a href="#" className="hover:text-white/70 transition-colors"><Facebook size={18} /></a>
             <a href="#" className="hover:text-white/70 transition-colors"><Instagram size={18} /></a>
@@ -110,7 +110,7 @@ const Login: React.FC<LoginProps> = ({ onToggle }) => {
       </div>
 
       {/* Right Section - Floating Login Card */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10 lg:ml-[60%] min-h-screen">
         <motion.div 
           initial={{ opacity: 0, y: 25, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
